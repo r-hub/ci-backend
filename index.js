@@ -9,11 +9,11 @@ function run(q) {
     amqp.connect(broker_url).then(function(conn) {
 	process.once('SIGINT', function() { conn.close(); });
 	return conn.createChannel().then(function(ch) {
-	    var ok = ch.assertQueue(q, {durable: true});
-	    ok = ok.then(function() { ch.prefetch(1); });
-	    ok = ok.then(function() {
-		ch.consume(q, doWork, {noAck: false});
-	    });
+	    var ok = ch.assertQueue(q, {durable: true})
+		.then(function() { ch.prefetch(1); })
+		.then(function() {
+		    ch.consume(q, doWork, { noAck: false });
+		});
 	    return ok;
 
 	    function doWork(msg) {
