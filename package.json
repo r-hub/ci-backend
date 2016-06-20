@@ -1,0 +1,20 @@
+{
+  "name": "ci-backend",
+  "version": "1.0.0",
+  "description": "The back-end of the r-hub CI.",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/scheduler"
+  },
+  "engines": {
+    "node": "4.4.x"
+  },
+  "dependencies": {
+    "amqplib": "^0.4.0",
+    "debug": "~2.2.0",
+    "jenkins": "^0.11.0",
+    "mustache": "^2.2.1"
+  }
+}
