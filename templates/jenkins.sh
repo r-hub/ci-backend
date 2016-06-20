@@ -18,7 +18,7 @@ tar xzf "$package" "$DESC"
 echo ">>>>>==================== Querying system requirements"
 
 sysreqs=$(Rscript -e "library(sysreqs); cat(sysreq_commands(\"$DESC\"))")
-rm -rf "$package" "$DESC"
+rm "$DESC"
 
 echo ">>>>>==================== Installing system requirements"
 
@@ -26,20 +26,23 @@ echo ">>>>>==================== Installing system requirements"
 if [ ! -z "${sysreqs}" ]; then
     cont=$(docker run -d --user root rhub/${image} \
 		  bash -c "$sysreqs")
-    # Wait until it stops
-    docker attach $cont || true
-    # Save the container as an image
-    newimage=$(docker commit $cont)
 else
-    # If there is nothing to install we just use the stock image
-    cont=""
-    newimage=rhub/${image}
+    # If there is nothing to install we still start the container
+    cont=$(docker run -d rhub/${image} /bin/ls)
 fi
 
-# Run the build in the new image
+# Wait until it stops
+docker attach $cont || true
 
+# Copy over the package
+docker cp "$package" $cont:/home/docker/
+rm "$package"
+
+# Save the container as an image
+newimage=$(docker commit $cont)
+
+# Run the build in the new image
 env=$(tempfile)
-echo url=$url >> $env
 echo package=$package >> $env
 
 echo ">>>>>==================== Starting Docker container"
@@ -65,19 +68,23 @@ echo ">>>>>==================== Querying package dependencies"
 curl -O https://raw.githubusercontent.com/MangoTheCat/remotes/master/install-github.R
 R -e "source(\"install-github.R\")\$value(\"mangothecat/remotes\")"
 
-## Download the submitted package
-curl -L -o "$package" "$url"
+echo ">>>>>==================== Building package"
+
+tar xzf "$package"
+R CMD build $(tar tzf "$package" | head -n 1)
+rm "$package"
+builtpackage=$(ls -1t *.tar.gz | head -n 1)
 
 echo ">>>>>==================== Installing package dependencies"
 
 ## Install the package, so its dependencies will be installed
 ## This is a temporary solution, until remotes::install_deps works on a 
 ## package bundle
-R -e "remotes::install_local(\"$package\", dependencies = TRUE)"
+R -e "remotes::install_local(\"$builtpackage\", dependencies = TRUE)"
 
 echo ">>>>>==================== Running R CMD check"
 
-xvfb-run R CMD check "$package"
+xvfb-run R CMD check "$builtpackage"
 EOF
 
 # Destroy the new containers and the images
