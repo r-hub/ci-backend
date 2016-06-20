@@ -17,7 +17,6 @@ function run(q) {
 	    return ok;
 
 	    function doWork(msg) {
-		console.log("TRying to get job");
 		var msg_obj = JSON.parse(msg.content.toString());
 		console.log("STARTED: " + msg_obj);
 
