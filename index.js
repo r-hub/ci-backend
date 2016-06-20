@@ -26,7 +26,6 @@ function run(q) {
 			ch.ack(msg);
 		    } else {
 			console.log("ERROR: " + msg_obj.repository.full_name);
-			ch.ack(msg);
 		    }
 		})
 	    }
