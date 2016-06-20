@@ -22,10 +22,11 @@ function run(q) {
 
 		builder(msg_obj, function(error) {
 		    if (!error) {
-			console.log("DONE: " + msg_obj.package);
+			console.log("DONE: " + msg_obj.repository.full_name);
 			ch.ack(msg);
 		    } else {
-			console.log("ERROR: " + msg_obj.package);
+			console.log("ERROR: " + msg_obj.repository.full_name);
+			ch.ack(msg);
 		    }
 		})
 	    }
