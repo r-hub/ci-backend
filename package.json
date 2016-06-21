@@ -10,9 +10,11 @@
   },
   "dependencies": {
     "amqplib": "^0.4.2",
+    "array-range": "^1.0.1",
     "debug": "^2.2.0",
     "jenkins": "^0.17.0",
     "mustache": "^2.2.1",
+    "pg": "^5.1.0",
     "uuid": "^2.0.2"
   }
 }
