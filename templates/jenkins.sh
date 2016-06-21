@@ -1,3 +1,5 @@
+# Let r-hub know that the build is starting
+wget ${ciurl}/START/$(date +%Y-%m-%dT%H:%M:%SZ) || true
 
 # Get the platform, the R package uses this to determine
 # the packages needed
