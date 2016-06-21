@@ -27,6 +27,7 @@ function run(q) {
 		    } else {
 			console.log("ERROR: " + msg_obj.repository.full_name);
 			console.log(error);
+			ch.nack(msg);
 		    }
 		})
 	    }
